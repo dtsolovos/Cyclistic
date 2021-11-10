@@ -167,6 +167,36 @@ cyc_clean %>%
 
 As is evident by this graph, while casual riders use the bikes longer than members, their pattern is somewhat erratic and unpredictable. As in all other graphs, Cyclistic members are consistent in their use of the bikes.
 
+# Conclusion
+The above graphs show that while Cyclistic members consistently use them each day for a short time, casual members use them more erratically. The generally ride for a considerably longer time than members, but their use of the bikes is dropping during the weekdays and sharply rises during the weekend. Also, casual riders take more trips during the summer months than annual members. All these observations suggest that Cyclistic members use the service as a mode of transportation, while casual riders mostly use it as a mode of recreation.
+
+# Recommendations
+
+* In order to convince casual users to become annual members, we need to convince them to see bicycles as a proper mode of transportation. This could be done by creating incentives for consistent use. An example would be presenting our bikes as an environmentally friendly alternative to cars and public transportation and create an environmental awareness program, with rewards for annual members who consistently use the service for a certain duration.
+
+* According to my analysis, the vast majority of casual riders use the bikes during the weekend. We could create limited time offers that only last during specific weekends, in order to both target as many casual members as possible and entice them with a time incentive.
+
+* Casual riders' use of the bikes rises sharply, to even surpass that of members,  during the summer months. Thus, the best time to launch a major marketing campaign would be from mid May to early/mid September.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
