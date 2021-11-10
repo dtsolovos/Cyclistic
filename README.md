@@ -76,8 +76,10 @@ After that, I had to remove some test entries and empty fields that were caused 
 
 ```
 cyc_filtered <- cyc %>% 
-  filter(start_station_id != "TEST", start_station_name != "WATSON TESTING - DIVVY") %>% 
-  filter(end_station_id != "TEST", end_station_name != "WATSON TESTING - DIVVY") %>% 
+  filter(start_station_id != "TEST", 
+         start_station_name != "WATSON TESTING - DIVVY") %>% 
+  filter(end_station_id != "TEST", 
+          end_station_name != "WATSON TESTING - DIVVY") %>% 
   drop_na()
 ```
 
@@ -103,15 +105,45 @@ cyc_clean$weekday <- wday(cyc_clean$started_at, label = TRUE, abbr = TRUE)
 cyc_clean$month <- month(cyc_clean$started_at, label = TRUE, abbr = TRUE)
 ```
 
+# Analysis
+While I could use ```ggplot2```, I decided to export the resulting tables and use Tableau to create the visualizations I needed.
+In order to generate some insights, I needed to see daily, monthly and total rides for each user, as well as the average ride duration during these periods.
 
+## Total rides and average ride duration
+```
+cyc_clean %>% 
+  count(member_casual, name = "number_of_trips")
+```
+```
+cyc_clean %>% 
+  group_by(member_casual) %>% 
+  summarize(mean(trip_length))
+```  
+![total & average rides](https://github.com/dtsolovos/Cyclistic/blob/main/Total%20%26%20Average%20Trip.png)
 
+As we can see in the graph, Cyclistic members use the bikes more often than casual riders, but for significantly less time.
 
+## Daily rides
 
+```
+cyc_clean %>% 
+  group_by(member_casual) %>% 
+  count(weekday, name = "number_of_trips")
+```
+![daily trips](https://github.com/dtsolovos/Cyclistic/blob/main/Daily%20Trips.png)
 
+According to the graph, casual riders use the bikes much more during the weekend, while annual members use them more consistently, with a slight increase during the middle of the week.
 
+## Average daily ride duration
 
+```
+cyc_clean %>% 
+  group_by(member_casual, weekday) %>% 
+  summarize(mean(trip_length))
+```
+![daily average](https://github.com/dtsolovos/Cyclistic/blob/main/Daily%20Average%20Trip%20Duration.png)
 
-
+This graph shows that the casual riders use the bikes significantly more during the weekend, while Cyclistic members use them consistently through the week, with a slight increase during the weekend.
 
 
 
