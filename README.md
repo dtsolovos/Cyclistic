@@ -145,6 +145,29 @@ cyc_clean %>%
 
 This graph shows that the casual riders use the bikes significantly more during the weekend, while Cyclistic members use them consistently through the week, with a slight increase during the weekend.
 
+## Monthly rides
+
+```
+cyc_clean %>% 
+  group_by(member_casual) %>% 
+  count(month, name = "number_of_trips")
+```
+~[monthly trips](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Trips.png)
+
+Both casual riders and members use the bikes considerably less during the colder years. However, while members consistently use the service more often than casual riders, the casual riders use it more during the summer months.
+
+## Average monthly ride duration
+
+```
+cyc_clean %>% 
+  group_by(member_casual, month) %>% 
+  summarize(mean(trip_length))
+```
+![monthly average](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Average%20Trip%20Duration.png)
+
+As is evident by this graph, while casual riders use the bikes longer than members, their pattern is somewhat erratic and unpredictable. As in all other graphs, Cyclistic members are consistent in their use of the bikes.
+
+
 
 
 
