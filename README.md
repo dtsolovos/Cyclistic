@@ -152,7 +152,7 @@ cyc_clean %>%
   group_by(member_casual) %>% 
   count(month, name = "number_of_trips")
 ```
-~[monthly trips](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Trips.png)
+![monthly trips](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Trips.png)
 
 Both casual riders and members use the bikes considerably less during the colder years. However, while members consistently use the service more often than casual riders, the casual riders use it more often than members during the summer months.
 
