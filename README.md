@@ -27,4 +27,49 @@ While Cyclistic is a fictional company, the data I will be using is from Divvy, 
 * end_lng: end docking station longitude (numeric)
 * member_casual: rider type (string)
 
-The data can be found at [Divvy Trip Data](https://divvy-tripdata.s3.amazonaws.com/index.html)
+The data is published as CSV files and can be found at [Divvy Trip Data](https://divvy-tripdata.s3.amazonaws.com/index.html).
+
+# Data Cleaning and Transformation
+Given that the total number of observations is greater than five million, I decided to clean and process with R, using RStudio. 
+
+After setting up the working directory, the first thing to do was to setup the environment. For the purpose of this project, I needed the *tidyverse* and *lubridate* packages:
+
+```
+library(tidyverse)
+library(lubridate)
+```
+
+My analysis will cover the period from October 2020 to September 2021, so I downloaded and imported the relevant CSV files in RStudio:
+
+```
+oct_2020 <- read_csv("CSV\\202010-divvy-tripdata.csv")
+nov_2020 <- read_csv("CSV\\202011-divvy-tripdata.csv")
+dec_2020 <- read_csv("CSV\\202012-divvy-tripdata.csv")
+jan_2021 <- read_csv("CSV\\202101-divvy-tripdata.csv") 
+feb_2021 <- read_csv("CSV\\202102-divvy-tripdata.csv") 
+mar_2021 <- read_csv("CSV\\202103-divvy-tripdata.csv")
+apr_2021 <- read_csv("CSV\\202104-divvy-tripdata.csv")
+may_2021 <- read_csv("CSV\\202105-divvy-tripdata.csv")
+jun_2021 <- read_csv("CSV\\202106-divvy-tripdata.csv")
+jul_2021 <- read_csv("CSV\\202107-divvy-tripdata.csv")
+aug_2021 <- read_csv("CSV\\202108-divvy-tripdata.csv")
+sep_2021 <- read_csv("CSV\\202109-divvy-tripdata.csv") 
+```
+While checking the resulting tables to see if the data types were consistent, I noticed that the fields *start_station_id* and *end_station_id* in *oct_2020* and *nov_2020* were double numeric types, while in all other tables they were character types. After checking the data to see if there are any other general differences in these particular fields, I coerced the fields in *oct_2020* and *nov_2020* into character type, so that they are consistent with the other tables:
+
+```
+oct_2020$start_station_id <- as.character(oct_2020$start_station_id)
+oct_2020$end_station_id <- as.character(oct_2020$end_station_id)
+nov_2020$start_station_id <- as.character(nov_2020$start_station_id)
+nov_2020$end_station_id <- as.character(nov_2020$end_station_id)
+```
+
+
+
+
+
+
+
+
+
+
