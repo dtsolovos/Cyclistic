@@ -30,7 +30,7 @@ While Cyclistic is a fictional company, the data I will be using is from Divvy, 
 The data is published as CSV files and can be found at [Divvy Trip Data](https://divvy-tripdata.s3.amazonaws.com/index.html).
 
 # Data Cleaning and Transformation
-Given that the total number of observations is greater than five million, I decided to clean and process with R, using RStudio. 
+Given that the total number of observations is greater than five million, I decided to clean and process the data with R, using RStudio. 
 
 After setting up the working directory, the first thing to do was to setup the environment. For the purpose of this project, I needed the ```tidyverse``` and ```lubridate``` packages:
 
@@ -56,7 +56,7 @@ aug_2021 <- read_csv("CSV\\202108-divvy-tripdata.csv")
 sep_2021 <- read_csv("CSV\\202109-divvy-tripdata.csv") 
 ```
 
-While checking the resulting tables to see if the data types were consistent, I noticed that the fields *start_station_id* and *end_station_id* in *oct_2020* and *nov_2020* were double numeric types, while in all other tables they were character types. After checking the data to see if there are any other general differences in these particular fields, I coerced the fields in *oct_2020* and *nov_2020* into character type, so that they are consistent with the other tables:
+While checking the resulting tables to see if the data types were consistent, I noticed that the fields *start_station_id* and *end_station_id*, in *oct_2020* and *nov_2020*, were double numeric types, while in all other tables they were character types. After checking the data to see if there are any other general differences in these particular fields, I coerced the fields in *oct_2020* and *nov_2020* into character type, so that they are consistent with the other tables:
 
 ```
 oct_2020$start_station_id <- as.character(oct_2020$start_station_id)
@@ -79,7 +79,7 @@ cyc_filtered <- cyc %>%
   filter(start_station_id != "TEST", 
          start_station_name != "WATSON TESTING - DIVVY") %>% 
   filter(end_station_id != "TEST", 
-          end_station_name != "WATSON TESTING - DIVVY") %>% 
+         end_station_name != "WATSON TESTING - DIVVY") %>% 
   drop_na()
 ```
 
@@ -154,7 +154,7 @@ cyc_clean %>%
 ```
 ~[monthly trips](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Trips.png)
 
-Both casual riders and members use the bikes considerably less during the colder years. However, while members consistently use the service more often than casual riders, the casual riders use it more during the summer months.
+Both casual riders and members use the bikes considerably less during the colder years. However, while members consistently use the service more often than casual riders, the casual riders use it more often than members during the summer months.
 
 ## Average monthly ride duration
 
@@ -165,14 +165,14 @@ cyc_clean %>%
 ```
 ![monthly average](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Average%20Trip%20Duration.png)
 
-As is evident by this graph, while casual riders use the bikes longer than members, their pattern is somewhat erratic and unpredictable. As in all other graphs, Cyclistic members are consistent in their use of the bikes.
+As is evident by this graph, while casual riders use the bikes longer than members, their monthly pattern is somewhat erratic and unpredictable. As in all other graphs, Cyclistic members are consistent in their use of the bikes.
 
 # Conclusion
-The above graphs show that while Cyclistic members consistently use them each day for a short time, casual members use them more erratically. The generally ride for a considerably longer time than members, but their use of the bikes is dropping during the weekdays and sharply rises during the weekend. Also, casual riders take more trips during the summer months than annual members. All these observations suggest that Cyclistic members use the service as a mode of transportation, while casual riders mostly use it as a mode of recreation.
+The above graphs show that while Cyclistic members consistently use the bikes each day for a short time, casual members use them more erratically. They generally ride for a considerably longer time than members, but their use of the bikes is dropping during the weekdays and sharply rises during the weekend. Also, casual riders take more trips during the summer months than annual members. These observations suggest that Cyclistic members use the service more as a mode of transportation, while casual riders mostly use it as a mode of recreation.
 
 # Recommendations
 
-* In order to convince casual users to become annual members, we need to convince them to see bicycles as a proper mode of transportation. This could be done by creating incentives for consistent use. An example would be presenting our bikes as an environmentally friendly alternative to cars and public transportation and create an environmental awareness program, with rewards for annual members who consistently use the service for a certain duration.
+* In order to convince casual users to become annual members, we need to convince them to see bicycles as an every day mode of transportation. This could be done by creating incentives for consistent use. An example would be presenting our bikes as an environmentally friendly alternative to cars and public transportation and creating an environmental awareness program, with rewards for annual members who consistently use the service.
 
 * According to my analysis, the vast majority of casual riders use the bikes during the weekend. We could create limited time offers that only last during specific weekends, in order to both target as many casual members as possible and entice them with a time incentive.
 
