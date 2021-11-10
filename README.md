@@ -32,7 +32,7 @@ The data is published as CSV files and can be found at [Divvy Trip Data](https:/
 # Data Cleaning and Transformation
 Given that the total number of observations is greater than five million, I decided to clean and process with R, using RStudio. 
 
-After setting up the working directory, the first thing to do was to setup the environment. For the purpose of this project, I needed the *tidyverse* and *lubridate* packages:
+After setting up the working directory, the first thing to do was to setup the environment. For the purpose of this project, I needed the ```tidyverse``` and ```lubridate``` packages:
 
 ```
 library(tidyverse)
@@ -55,6 +55,7 @@ jul_2021 <- read_csv("CSV\\202107-divvy-tripdata.csv")
 aug_2021 <- read_csv("CSV\\202108-divvy-tripdata.csv")
 sep_2021 <- read_csv("CSV\\202109-divvy-tripdata.csv") 
 ```
+
 While checking the resulting tables to see if the data types were consistent, I noticed that the fields *start_station_id* and *end_station_id* in *oct_2020* and *nov_2020* were double numeric types, while in all other tables they were character types. After checking the data to see if there are any other general differences in these particular fields, I coerced the fields in *oct_2020* and *nov_2020* into character type, so that they are consistent with the other tables:
 
 ```
@@ -63,6 +64,49 @@ oct_2020$end_station_id <- as.character(oct_2020$end_station_id)
 nov_2020$start_station_id <- as.character(nov_2020$start_station_id)
 nov_2020$end_station_id <- as.character(nov_2020$end_station_id)
 ```
+
+Next, I merged all the tables into a single one:
+
+```
+cyc <- rbind(oct_2020, nov_2020, dec_2020, jan_2021, feb_2021, mar_2021, 
+             apr_2021, may_2021, jun_2021, jul_2021, aug_2021, sep_2021)
+```
+
+After that, I had to remove some test entries and empty fields that were caused by bad sensor data:
+
+```
+cyc_filtered <- cyc %>% 
+  filter(start_station_id != "TEST", start_station_name != "WATSON TESTING - DIVVY") %>% 
+  filter(end_station_id != "TEST", end_station_name != "WATSON TESTING - DIVVY") %>% 
+  drop_na()
+```
+
+Then, I created a table which contained only the fields relevant to my analysis, namely *started_at*, *ended_at* and *member_casual*:
+
+```
+cyc_clean <- cyc_filtered[c(3, 4, 13)]
+cyc_clean
+```
+
+For the analysis, I needed to create a trip duration variable. Since the data type of *started_at* and *ended_at* is datetime, I used ```difftime()``` to calculate the duration of each trip. I had to account for negative durations due to faulty data, and durations of a few seconds caused by bike docking tests, so I filtered out all durations under one minute:
+
+```
+cyc_clean <- cyc_clean %>% 
+  mutate(trip_length = difftime(ended_at, started_at, units = "mins")) %>% 
+  filter(trip_length >= 1)
+```
+
+I also needed create day and month fields, which is where the ```lubridate``` package came in handy:
+
+```
+cyc_clean$weekday <- wday(cyc_clean$started_at, label = TRUE, abbr = TRUE)
+cyc_clean$month <- month(cyc_clean$started_at, label = TRUE, abbr = TRUE)
+```
+
+
+
+
+
 
 
 
