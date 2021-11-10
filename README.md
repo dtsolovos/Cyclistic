@@ -72,7 +72,7 @@ cyc <- rbind(oct_2020, nov_2020, dec_2020, jan_2021, feb_2021, mar_2021,
              apr_2021, may_2021, jun_2021, jul_2021, aug_2021, sep_2021)
 ```
 
-After that, I had to remove some test entries and empty fields that were caused by bad sensor data:
+After that, I had to remove some test entries and empty fields that were caused by bad sensor data and checked for any remaining NA entries:
 
 ```
 cyc_filtered <- cyc %>% 
@@ -81,6 +81,7 @@ cyc_filtered <- cyc %>%
   filter(end_station_id != "TEST", 
          end_station_name != "WATSON TESTING - DIVVY") %>% 
   drop_na()
+ anyNA(cyc_filtered)
 ```
 
 Then, I created a table which contained only the fields relevant to my analysis, namely *started_at*, *ended_at* and *member_casual*:
