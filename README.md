@@ -35,6 +35,8 @@ Given that the total number of observations is greater than five million, I deci
 After setting up the working directory, the first thing to do was to setup the environment. For the purpose of this project, I needed the ```tidyverse``` and ```lubridate``` packages:
 
 ```
+install.packages('tidyverse')
+install.packages('lubridate')
 library(tidyverse)
 library(lubridate)
 ```
