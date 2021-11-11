@@ -101,7 +101,7 @@ cyc_clean <- cyc_clean %>%
   filter(trip_length >= 1)
 ```
 
-I also needed create day and month fields, which is where the ```lubridate``` package came in handy:
+I wanted to compare the users' daily and monthly rides, so I needed to create day and month fields:
 
 ```
 cyc_clean$weekday <- wday(cyc_clean$started_at, label = TRUE, abbr = TRUE)
@@ -109,42 +109,81 @@ cyc_clean$month <- month(cyc_clean$started_at, label = TRUE, abbr = TRUE)
 ```
 
 # Analysis
-While I could use ```ggplot2```, I decided to export the resulting tables and use Tableau to create the visualizations I needed.
 In order to generate some insights, I needed to see daily, monthly and total rides for each user, as well as the average ride duration during these periods.
 
 ## Total rides and average ride duration
 ```
 cyc_clean %>% 
-  count(member_casual, name = "number_of_trips")
+  count(member_casual, name = "number_of_trips") %>% 
+  ggplot(mapping = aes(x = member_casual, y = number_of_trips, 
+                       width = 0.5))+
+  geom_col(stat = "identity", fill = "deepskyblue4")+
+  labs(title = "Total Number of Rides", 
+       subtitle = "October 2020 to September 2021", 
+       x = "User", y = "Number of Rides")+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
 ```
+
+![Total Rides](https://github.com/dtsolovos/Cyclistic/blob/main/Total%20trips.png)
+
+As we can see in the graph, Cyclistic members use the bikes more often than casual riders.
+
 ```
 cyc_clean %>% 
   group_by(member_casual) %>% 
-  summarize(mean(trip_length))
+  summarize(mean_ride = mean(trip_length)) %>% 
+  ggplot(mapping = aes(x = member_casual, y = mean_ride,
+                       width = 0.5))+
+  geom_col(stat = "identity", fill = "deepskyblue4")+
+  labs(title = "Average Ride Duration", 
+       subtitle = "October 2020 to September 2021", 
+       x = "User", y = "Average Ride Duration(mins)")+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
 ```  
-![total & average rides](https://github.com/dtsolovos/Cyclistic/blob/main/Total%20%26%20Average%20Trip.png)
 
-As we can see in the graph, Cyclistic members use the bikes more often than casual riders, but for significantly less time.
+![Ride Duration](https://github.com/dtsolovos/Cyclistic/blob/main/Ride%20Duration.png)
+
+However, casual riders use the the bikes for a significantly longer time than annual members.
 
 ## Daily rides
 
 ```
 cyc_clean %>% 
   group_by(member_casual) %>% 
-  count(weekday, name = "number_of_trips")
+  count(weekday, name = "number_of_trips")%>% 
+  ggplot(aes(x = weekday, y = number_of_trips, 
+             color = member_casual, group = member_casual))+
+  geom_line(size = 1)+
+  scale_y_continuous(limits=c(0, 500000), labels = number)+
+  labs(title = "Daily Rides", 
+       subtitle = "October 2020 to September 2021", 
+       x = "Day", y = "Number of Rides", color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
 ```
-![daily trips](https://github.com/dtsolovos/Cyclistic/blob/main/Daily%20Trips.png)
+![Daily Rides](https://github.com/dtsolovos/Cyclistic/blob/main/Daily%20Trips.png)
 
 According to the graph, casual riders use the bikes much more during the weekend, while annual members use them more consistently, with a slight increase during the middle of the week.
 
 ## Average daily ride duration
 
-```
-cyc_clean %>% 
+```cyc_clean %>% 
   group_by(member_casual, weekday) %>% 
-  summarize(mean(trip_length))
+  summarize(mean_weekly_ride = mean(trip_length)) %>% 
+  ggplot(aes(x = weekday, y = mean_weekly_ride, 
+             color = member_casual, group = member_casual))+
+  geom_line(size = 1)+
+  scale_y_continuous(breaks = seq(0, 60, by = 10), limits = c(0, 60))+
+  labs(title = "Average Daily Ride Duration", 
+       subtitle = "October 2020 to September 2021", 
+       x = "Day", y = "Average Daily Ride Duration(mins)",
+       color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
 ```
-![daily average](https://github.com/dtsolovos/Cyclistic/blob/main/Daily%20Average%20Trip%20Duration.png)
+![Average Daily Ride Duration](https://github.com/dtsolovos/Cyclistic/blob/main/Average%20Daily%20Ride%20Duration.png)
 
 This graph shows that the casual riders use the bikes significantly more during the weekend, while Cyclistic members use them consistently through the week, with a slight increase during the weekend.
 
@@ -153,20 +192,39 @@ This graph shows that the casual riders use the bikes significantly more during 
 ```
 cyc_clean %>% 
   group_by(member_casual) %>% 
-  count(month, name = "number_of_trips")
+  count(month, name = "number_of_trips") %>% 
+  ggplot(aes(x = month, y = number_of_trips, 
+             color = member_casual, group = member_casual))+
+  geom_line(size = 1)+
+  scale_y_continuous(limits=c(0, 400000), labels = number)+
+  labs(title = "Monthly Rides", 
+       subtitle = "October 2020 to September 2021", 
+       x = "Month", y = "Number of Rides", color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
 ```
-![monthly trips](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Trips.png)
+![Monthly Rides](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Rides.png)
 
-Both casual riders and members use the bikes considerably less during the colder years. However, while members consistently use the service more often than casual riders, the casual riders use it more often than members during the summer months.
+Both casual riders and members use the bikes considerably less during the colder months. However, while members consistently use the service more often than casual riders, casual riders use it more often than members during the summer months.
 
 ## Average monthly ride duration
 
 ```
 cyc_clean %>% 
   group_by(member_casual, month) %>% 
-  summarize(mean(trip_length))
+  summarize(mean_monthly_ride = mean(trip_length)) %>% 
+  ggplot(aes(x = month, y = mean_monthly_ride, 
+             color = member_casual, group = member_casual))+
+  geom_line(size = 1)+
+  scale_y_continuous(breaks = seq(0, 60, by = 10), limits = c(0, 60))+
+  labs(title = "Average Monthly Ride Duration", 
+       subtitle = "October 2020 to September 2021", 
+       x = "Month", y = "Average Monthly Ride Duration(mins)",
+       color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
 ```
-![monthly average](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Average%20Trip%20Duration.png)
+![Monthly Average Ride Duration](https://github.com/dtsolovos/Cyclistic/blob/main/Average%20Monthly%20Ride%20Duration.png)
 
 As is evident by this graph, while casual riders use the bikes longer than members, their monthly pattern is somewhat erratic and unpredictable. As in all other graphs, Cyclistic members are consistent in their use of the bikes.
 
