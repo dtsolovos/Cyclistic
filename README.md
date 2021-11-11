@@ -13,19 +13,19 @@ My team's goal is to design marketing strategies to convert casual riders into a
 ## Data
 While Cyclistic is a fictional company, the data I will be using is from Divvy, Chicago city's bike share program. The data is collected by sensors on the docking stations and produce the following variables:
 
-* ride_id: unique id of a single trip (string)
-* rideable_type: type of bike used (string)
-* started_at: date and time the bike was undocked (datetime)
-* ended_at: date and time the bike was docked (datetime)
-* start_station_name: location of start docking station (string)
-* start_station_id: id of start docking station (string)
-* end_station_name: location of end docking station (string)
-* end_station_id: id of end docking station (string)
-* start_lat: start docking station latitude (numeric)
-* start_lng: start docking station longitude (numeric)
-* end_lat: end docking station latitude (numeric)
-* end_lng: end docking station longitude (numeric)
-* member_casual: rider type (string)
+* *ride_id*: unique id of a single trip (string)
+* *rideable_type*: type of bike used (string)
+* *started_at*: date and time the bike was undocked (datetime)
+* *ended_at*: date and time the bike was docked (datetime)
+* *start_station_name*: location of start docking station (string)
+* *start_station_id*: id of start docking station (string)
+* *end_station_name*: location of end docking station (string)
+* *end_station_id*: id of end docking station (string)
+* *start_lat*: start docking station latitude (numeric)
+* *start_lng*: start docking station longitude (numeric)
+* *end_lat*: end docking station latitude (numeric)
+* *end_lng*: end docking station longitude (numeric)
+* *member_casual*: rider type (string)
 
 The data is published as CSV files and can be found at [Divvy Trip Data](https://divvy-tripdata.s3.amazonaws.com/index.html).
 
@@ -58,7 +58,7 @@ aug_2021 <- read_csv("CSV\\202108-divvy-tripdata.csv")
 sep_2021 <- read_csv("CSV\\202109-divvy-tripdata.csv") 
 ```
 
-While checking the resulting tables to see if the data types were consistent, I noticed that the fields *start_station_id* and *end_station_id*, in *oct_2020* and *nov_2020*, were double numeric types, while in all other tables they were character types. After checking the data to see if there are any other general differences in these particular fields, I coerced the fields in *oct_2020* and *nov_2020* into character type, so that they are consistent with the other tables:
+While checking the structure of the resulting tables using ```str()```, I noticed that the fields *start_station_id* and *end_station_id*, in tables *oct_2020* and *nov_2020*, were double numeric types, while in all other tables they were character types. After checking the data to see if there are any other general differences in these particular fields, I coerced the fields in *oct_2020* and *nov_2020* into character type, so that they are consistent with the other tables:
 
 ```
 oct_2020$start_station_id <- as.character(oct_2020$start_station_id)
@@ -74,7 +74,7 @@ cyc <- rbind(oct_2020, nov_2020, dec_2020, jan_2021, feb_2021, mar_2021,
              apr_2021, may_2021, jun_2021, jul_2021, aug_2021, sep_2021)
 ```
 
-After that, I had to remove some test entries and empty fields that were caused by bad sensor data and checked for any remaining NA entries:
+After that, I had to remove some test entries and empty fields that were caused by bad sensor data and check for any remaining NA entries:
 
 ```
 cyc_filtered <- cyc %>% 
@@ -83,7 +83,7 @@ cyc_filtered <- cyc %>%
   filter(end_station_id != "TEST", 
          end_station_name != "WATSON TESTING - DIVVY") %>% 
   drop_na()
- anyNA(cyc_filtered)
+anyNA(cyc_filtered)
 ```
 
 Then, I created a table which contained only the fields relevant to my analysis, namely *started_at*, *ended_at* and *member_casual*:
@@ -111,36 +111,31 @@ cyc_clean$month <- month(cyc_clean$started_at, label = TRUE, abbr = TRUE)
 # Analysis
 In order to generate some insights, I needed to see daily, monthly and total rides for each user, as well as the average ride duration during these periods.
 
-## Total rides and average ride duration
+## Total Rides
 ```
 cyc_clean %>% 
   count(member_casual, name = "number_of_trips") %>% 
-  ggplot(mapping = aes(x = member_casual, y = number_of_trips, 
-                       width = 0.5))+
+  ggplot(mapping = aes(x = member_casual, y = number_of_trips, width = 0.5))+
   geom_col(stat = "identity", fill = "deepskyblue4")+
-  labs(title = "Total Number of Rides", 
-       subtitle = "October 2020 to September 2021", 
+  labs(title = "Total Number of Rides", subtitle = "October 2020 to September 2021", 
        x = "User", y = "Number of Rides")+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```
 
 ![Total Rides](https://github.com/dtsolovos/Cyclistic/blob/main/Total%20trips.png)
 
 As we can see in the graph, Cyclistic members use the bikes more often than casual riders.
 
+## Total Average Ride Duration
 ```
 cyc_clean %>% 
   group_by(member_casual) %>% 
   summarize(mean_ride = mean(trip_length)) %>% 
-  ggplot(mapping = aes(x = member_casual, y = mean_ride,
-                       width = 0.5))+
+  ggplot(mapping = aes(x = member_casual, y = mean_ride, width = 0.5))+
   geom_col(stat = "identity", fill = "deepskyblue4")+
-  labs(title = "Average Ride Duration", 
-       subtitle = "October 2020 to September 2021", 
+  labs(title = "Average Ride Duration", subtitle = "October 2020 to September 2021", 
        x = "User", y = "Average Ride Duration(mins)")+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```  
 
 ![Ride Duration](https://github.com/dtsolovos/Cyclistic/blob/main/Ride%20Duration.png)
@@ -153,15 +148,12 @@ However, casual riders use the the bikes for a significantly longer time than an
 cyc_clean %>% 
   group_by(member_casual) %>% 
   count(weekday, name = "number_of_trips")%>% 
-  ggplot(aes(x = weekday, y = number_of_trips, 
-             color = member_casual, group = member_casual))+
+  ggplot(aes(x = weekday, y = number_of_trips, color = member_casual, group = member_casual))+
   geom_line(size = 1)+
   scale_y_continuous(limits=c(0, 500000), labels = number)+
-  labs(title = "Daily Rides", 
-       subtitle = "October 2020 to September 2021", 
-       x = "Day", y = "Number of Rides", color = "User")+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5))
+  labs(title = "Daily Rides", subtitle = "October 2020 to September 2021", x = "Day", 
+       y = "Number of Rides", color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```
 ![Daily Rides](https://github.com/dtsolovos/Cyclistic/blob/main/Daily%20Trips.png)
 
@@ -172,16 +164,12 @@ According to the graph, casual riders use the bikes much more during the weekend
 ```cyc_clean %>% 
   group_by(member_casual, weekday) %>% 
   summarize(mean_weekly_ride = mean(trip_length)) %>% 
-  ggplot(aes(x = weekday, y = mean_weekly_ride, 
-             color = member_casual, group = member_casual))+
+  ggplot(aes(x = weekday, y = mean_weekly_ride, color = member_casual, group = member_casual))+
   geom_line(size = 1)+
   scale_y_continuous(breaks = seq(0, 60, by = 10), limits = c(0, 60))+
-  labs(title = "Average Daily Ride Duration", 
-       subtitle = "October 2020 to September 2021", 
-       x = "Day", y = "Average Daily Ride Duration(mins)",
-       color = "User")+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5))
+  labs(title = "Average Daily Ride Duration", subtitle = "October 2020 to September 2021", 
+       x = "Day", y = "Average Daily Ride Duration(mins)", color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```
 ![Average Daily Ride Duration](https://github.com/dtsolovos/Cyclistic/blob/main/Average%20Daily%20Ride%20Duration.png)
 
@@ -193,15 +181,12 @@ This graph shows that the casual riders use the bikes significantly more during 
 cyc_clean %>% 
   group_by(member_casual) %>% 
   count(month, name = "number_of_trips") %>% 
-  ggplot(aes(x = month, y = number_of_trips, 
-             color = member_casual, group = member_casual))+
+  ggplot(aes(x = month, y = number_of_trips, color = member_casual, group = member_casual))+
   geom_line(size = 1)+
   scale_y_continuous(limits=c(0, 400000), labels = number)+
-  labs(title = "Monthly Rides", 
-       subtitle = "October 2020 to September 2021", 
-       x = "Month", y = "Number of Rides", color = "User")+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5))
+  labs(title = "Monthly Rides", subtitle = "October 2020 to September 2021", x = "Month", 
+       y = "Number of Rides", color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```
 ![Monthly Rides](https://github.com/dtsolovos/Cyclistic/blob/main/Monthly%20Rides.png)
 
@@ -213,16 +198,12 @@ Both casual riders and members use the bikes considerably less during the colder
 cyc_clean %>% 
   group_by(member_casual, month) %>% 
   summarize(mean_monthly_ride = mean(trip_length)) %>% 
-  ggplot(aes(x = month, y = mean_monthly_ride, 
-             color = member_casual, group = member_casual))+
+  ggplot(aes(x = month, y = mean_monthly_ride, color = member_casual, group = member_casual))+
   geom_line(size = 1)+
   scale_y_continuous(breaks = seq(0, 60, by = 10), limits = c(0, 60))+
-  labs(title = "Average Monthly Ride Duration", 
-       subtitle = "October 2020 to September 2021", 
-       x = "Month", y = "Average Monthly Ride Duration(mins)",
-       color = "User")+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5))
+  labs(title = "Average Monthly Ride Duration", subtitle = "October 2020 to September 2021", 
+       x = "Month", y = "Average Monthly Ride Duration(mins)", color = "User")+
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```
 ![Monthly Average Ride Duration](https://github.com/dtsolovos/Cyclistic/blob/main/Average%20Monthly%20Ride%20Duration.png)
 
