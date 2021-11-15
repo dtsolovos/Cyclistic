@@ -86,7 +86,7 @@ cyc_filtered <- cyc %>%
 anyNA(cyc_filtered)
 ```
 
-Then, I created a table which containing just the fields relevant to my analysis, namely *started_at*, *ended_at* and *member_casual*:
+Then, I created a table containing just the fields relevant to my analysis, namely *started_at*, *ended_at* and *member_casual*:
 
 ```
 cyc_clean <- cyc_filtered[c(3, 4, 13)]
@@ -161,7 +161,8 @@ According to the graph, casual riders use the bikes much more during the weekend
 
 ## Average daily ride duration
 
-```cyc_clean %>% 
+```
+cyc_clean %>% 
   group_by(member_casual, weekday) %>% 
   summarize(mean_weekly_ride = mean(trip_length)) %>% 
   ggplot(aes(x = weekday, y = mean_weekly_ride, color = member_casual, group = member_casual))+
